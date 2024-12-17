@@ -1,0 +1,70 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
+
+# Step 1: Generate Mock Data
+np.random.seed(42)
+
+# Simulated data size
+n_samples = 1000
+
+# Generate mock customer demographic data
+data = {
+    "CustomerID": np.arange(1, n_samples + 1),
+    "Age": np.random.randint(18, 70, n_samples),
+    "Gender": np.random.choice(["Male", "Female"], n_samples),
+    "AnnualIncome": np.random.randint(20000, 150000, n_samples),
+    "PurchaseFrequency": np.random.randint(1, 20, n_samples),
+    "TotalSpend": np.random.randint(100, 10000, n_samples),
+    "CustomerSupportCalls": np.random.randint(0, 10, n_samples),
+    "EngagementScore": np.random.uniform(0, 1, n_samples),
+    "SubscriptionLengthMonths": np.random.randint(1, 60, n_samples),
+    "Churn": np.random.choice([0, 1], n_samples, p=[0.7, 0.3])  # 70% no-churn, 30% churn
+}
+
+df = pd.DataFrame(data)
+
+# Step 2: Preprocess the Data
+# Encode categorical variables
+label_encoder = LabelEncoder()
+df['Gender'] = label_encoder.fit_transform(df['Gender'])
+
+# Features and target
+X = df.drop(columns=["CustomerID", "Churn"])
+y = df["Churn"]
+
+# Standardize numerical features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 3: Split the Data
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+# Step 4: Train the Model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Step 5: Evaluate the Model
+y_pred = rf_model.predict(X_test)
+
+# Performance Metrics
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+
+# Step 6: Display Results
+print("Customer Churn Prediction Results:")
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+print(f"F1 Score: {f1:.2f}")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# Confusion Matrix
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
