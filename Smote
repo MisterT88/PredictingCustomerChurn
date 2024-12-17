@@ -1,0 +1,19 @@
+# Alternative approach: Using class weights in Random Forest instead of SMOTE
+# Assign higher weights to class 1 (churn) to balance the imbalance
+
+# Update the model to include class weights
+rf_model_weighted = RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=42)
+rf_model_weighted.fit(X_train, y_train)
+
+# Evaluate the new model
+y_pred_weighted = rf_model_weighted.predict(X_test)
+
+# New performance metrics
+accuracy_weighted = accuracy_score(y_test, y_pred_weighted)
+precision_weighted = precision_score(y_test, y_pred_weighted)
+recall_weighted = recall_score(y_test, y_pred_weighted)
+f1_weighted = f1_score(y_test, y_pred_weighted)
+conf_matrix_weighted = confusion_matrix(y_test, y_pred_weighted)
+class_report_weighted = classification_report(y_test, y_pred_weighted)
+
+accuracy_weighted, precision_weighted, recall_weighted, f1_weighted, conf_matrix_weighted, class_report_weighted
